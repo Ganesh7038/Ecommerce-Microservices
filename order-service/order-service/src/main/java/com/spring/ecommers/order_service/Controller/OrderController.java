@@ -16,7 +16,7 @@ import com.spring.ecommers.order_service.Service.OrderService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/orders")
+@RequestMapping("/core")
 @RequiredArgsConstructor
 public class OrderController {
 	
@@ -44,7 +44,7 @@ public class OrderController {
 		ServiceInstance serviceInstance = discoveryClient.getInstances("inventory-service").get(0);
 		
 		System.out.println(serviceInstance.getUri());
-		Object data = restClient.get().uri(serviceInstance.getUri()+"/api/v1/products/{id}",id)
+		Object data = restClient.get().uri(serviceInstance.getUri()+"/inventory/products/{id}",id)
 		.retrieve()
 		.body(Object.class);
 		
