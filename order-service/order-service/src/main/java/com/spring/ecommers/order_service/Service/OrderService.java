@@ -3,9 +3,11 @@ package com.spring.ecommers.order_service.Service;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.spring.ecommers.order_service.Clients.InventoryOpenFeignClient;
 import com.spring.ecommers.order_service.DTO.OrderRequestDTO;
 import com.spring.ecommers.order_service.Entity.Orders;
 import com.spring.ecommers.order_service.Repository.OrderRepository;
@@ -20,6 +22,7 @@ public class OrderService {
 	
 	private final OrderRepository orderRepository;
 	private final ModelMapper modelMapper;
+	private final InventoryOpenFeignClient inventoryOpenFeignClient;
 	
 	public ResponseEntity<List<OrderRequestDTO>> getAllOrders()
 	{
@@ -39,6 +42,12 @@ public class OrderService {
 	{
 		Orders order = orderRepository.findById(id).orElseThrow();
 		return ResponseEntity.ok( modelMapper.map(order,OrderRequestDTO.class));
+	}
+
+	public String getProductsById(Long id) {
+		
+		return inventoryOpenFeignClient.getProductById(id).toString();
+		
 	}
 
 

@@ -41,14 +41,7 @@ public class OrderController {
 	@GetMapping("/products/{id}")
 	public String getProductsById(@PathVariable Long id)
 	{
-		ServiceInstance serviceInstance = discoveryClient.getInstances("inventory-service").get(0);
-		
-		System.out.println(serviceInstance.getUri());
-		Object data = restClient.get().uri(serviceInstance.getUri()+"/inventory/products/{id}",id)
-		.retrieve()
-		.body(Object.class);
-		
-		return data.toString();
+			return orderService.getProductsById(id);
 		
 	}
 

@@ -44,5 +44,11 @@ public class ProductController {
 	{
 		productService.addProducts(products);
 	}
+	
+	@GetMapping("/orders/{id}")
+	public String getOrdersById(@PathVariable Long id)
+	{
+		return productService.getOrdersById(id).toString();
+	}
 
 }

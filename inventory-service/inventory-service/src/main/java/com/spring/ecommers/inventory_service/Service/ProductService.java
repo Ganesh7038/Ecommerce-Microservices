@@ -5,6 +5,7 @@ import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import com.spring.ecommers.inventory_service.Clients.OrdersFeingClient;
 import com.spring.ecommers.inventory_service.DTO.ProductDTO;
 import com.spring.ecommers.inventory_service.Repository.ProductRepository;
 import com.spring.ecommers.inventory_service.entities.Product;
@@ -19,6 +20,7 @@ public class ProductService {
 	
 	private final ProductRepository productRepository;
 	private final ModelMapper modelMapper;
+	private final OrdersFeingClient ordersFeingClient;
 	
 	public List<ProductDTO> getAllProducts()
 	{
@@ -41,6 +43,12 @@ public class ProductService {
 		{
 			productRepository.save(product);
 		}
+		
+	}
+
+	public Object getOrdersById(Long id) {
+		
+		return ordersFeingClient.getOrderById(id);
 		
 	}
 
