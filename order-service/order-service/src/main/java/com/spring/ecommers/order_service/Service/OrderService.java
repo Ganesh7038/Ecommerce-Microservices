@@ -2,8 +2,14 @@ package com.spring.ecommers.order_service.Service;
 
 import java.util.List;
 
+import com.spring.ecommers.order_service.DTO.OrderRequestItemDTO;
+import com.spring.ecommers.order_service.DTO.ProductDTO;
+import com.spring.ecommers.order_service.Entity.OrderItem;
+import com.spring.ecommers.order_service.Enums.OrderStatus;
+import feign.Response;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
-import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -22,20 +28,13 @@ public class OrderService {
 	
 	private final OrderRepository orderRepository;
 	private final ModelMapper modelMapper;
-	private final InventoryOpenFeignClient inventoryOpenFeignClient;
+	private final InventoryOpenFeignClient inventoryFeignClient;
 	
 	public ResponseEntity<List<OrderRequestDTO>> getAllOrders()
 	{
 		List<Orders> orders = orderRepository.findAll();
 		
-		return ResponseEntity.ok(
-				
-				orders.
-				stream().
-				map( r -> modelMapper.map(r, OrderRequestDTO.class))
-				.toList()
-	
-				);
+		return ResponseEntity.ok(orders.stream().map( r -> modelMapper.map(r, OrderRequestDTO.class)).toList());
  	}
 	
 	public ResponseEntity<OrderRequestDTO> getOrderById(Long id)
@@ -46,9 +45,22 @@ public class OrderService {
 
 	public String getProductsById(Long id) {
 		
-		return inventoryOpenFeignClient.getProductById(id).toString();
-		
+		return inventoryFeignClient.getProductById(id).toString();
 	}
 
+    @Transactional
+    public OrderRequestDTO addOrder(OrderRequestDTO orderRequestDTO) {
 
+        Double totalPrice = inventoryFeignClient.updateProductStock(orderRequestDTO).getBody();
+
+        Orders orders = modelMapper.map(orderRequestDTO, Orders.class);
+
+        for(OrderItem orderItem : orders.getOrderItems()) { orderItem.setOrder(orders); }
+
+        orders.setTotal_price(totalPrice);
+        orders.setOrderStatus(OrderStatus.PLACED);
+
+        return modelMapper.map(orderRepository.save(orders),OrderRequestDTO.class);
+
+    }
 }

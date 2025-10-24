@@ -2,6 +2,9 @@ package com.spring.ecommers.inventory_service.Service;
 
 import java.util.List;
 
+import com.spring.ecommers.inventory_service.DTO.OrderRequestDTO;
+import com.spring.ecommers.inventory_service.DTO.OrderRequestItemDTO;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -52,4 +55,31 @@ public class ProductService {
 		
 	}
 
+    @Transactional
+    public Double updateProductStock(OrderRequestDTO orderRequestDTO) {
+
+       log.info("Reducing the stock");
+
+       Double totalPrice = 0.0;
+
+       for(OrderRequestItemDTO orderRequestItemDTO : orderRequestDTO.getOrderItems()){
+
+           Product product =  productRepository.findById(orderRequestItemDTO.getProductId()).orElseThrow(()->
+                   new RuntimeException("Product not found with Id " + orderRequestItemDTO.getProductId()) );
+
+           Integer quantity = orderRequestItemDTO.getQuantity();
+
+           if(quantity > product.getStock()){
+               throw new RuntimeException("Quantity exceeded");
+           }
+
+           product.setStock(product.getStock()-quantity);
+           productRepository.save(product);
+           totalPrice += quantity * product.getPrice();
+
+       }
+       
+       return totalPrice;
+
+    }
 }

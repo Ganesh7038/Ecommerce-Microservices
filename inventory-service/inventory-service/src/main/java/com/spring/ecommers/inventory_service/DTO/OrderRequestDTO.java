@@ -1,12 +1,11 @@
-package com.spring.ecommers.order_service.DTO;
+package com.spring.ecommers.inventory_service.DTO;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import com.spring.ecommers.order_service.Enums.OrderStatus;
+import com.spring.ecommers.inventory_service.Enums.OrderStatus;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class OrderRequestDTO {
@@ -16,6 +15,5 @@ public class OrderRequestDTO {
 	private Double total_Price;
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
-	
 
 }
