@@ -14,10 +14,18 @@ spring:
               uri: lb://ORDER-SERVICE
               predicates: 
                 - Path=/orders/core/**
+
+              filters:
+                - name: InventoryFilter
+                - name: AuthenticationFilter
+
             - id: INVENTORY-SERVICE
               uri: lb://INVENTORY-SERVICE
               predicates:
                 - Path=/inventory/products/**
+
+
+
 
 eureka:
   client:
@@ -31,3 +39,7 @@ logging:
     org.springframework.cloud.gateway: DEBUG
     org.springframework.cloud.netflix.eureka: DEBUG
     reactor.netty.http.server: DEBUG
+
+jwt:
+  secretKey:
+    knujkb5sgdbdh48h44c5b4d8th48rg4s4dxh8xh48d4b
